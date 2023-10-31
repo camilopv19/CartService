@@ -26,11 +26,24 @@ namespace Carts.Controllers
         /// <param name="cartId">String.</param>
         /// <returns>A cart with its Items, if any</returns>
         [HttpGet("{cartId}", Name = "GetCart")]
-        public ActionResult<Item> Get(string cartId)
+        public ActionResult<Cart> Get(string cartId)
         {
             var result = _itemService.GetCart(cartId);
             if (result != default)
                 return Ok(_itemService.GetCart(cartId));
+            else
+                return NotFound();
+        }
+        /// <summary>
+        /// Get all Carts
+        /// </summary>
+        /// <returns>A cart with its Items, if any</returns>
+        [HttpGet(Name = "GetAll")]
+        public ActionResult<Item> GetAll()
+        {
+            var result = _itemService.GetAll();
+            if (result != default)
+                return Ok(_itemService.GetAll());
             else
                 return NotFound();
         }
@@ -44,18 +57,24 @@ namespace Carts.Controllers
         {
 #pragma warning disable CS8604 // Possible null reference argument: cartId.
             int result = _itemService.Insert(cartId, dto);
-            return CreatedAtAction("AddItem", _itemService.GetCart(dto.CartId));
+            if (result == 0)
+            {
+                return BadRequest();
+            }
+            return Ok(dto);
         }
         /// <summary>
         /// Deletes a Item by its Id and CartId
         /// </summary>
+        /// <param name="cartId">The Id of the Cart containing the Item.</param>
+        /// <param name="itemId">The Id of the item to delete.</param>
         /// <returns>Ok</returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{cartId}/{itemId}")]
         public ActionResult<Item> Delete(string cartId, int itemId)
         {
             var result = _itemService.Delete(cartId, itemId);
             if (result > 0)
-                return NoContent();
+                return Ok($"{result} items were deleted with ItemId = {itemId}");
             else
                 return NotFound();
         }

@@ -22,32 +22,55 @@ namespace DAL.Interfaces
                                  .Find(x => x.Id == cartId)
                                  .FirstOrDefault();
         }
+        public IEnumerable<Cart> GetAll()
+        {
+            return _cartDbContext.GetCollection<Cart>("Carts").FindAll();
+        }
 
         public int Insert(string? cartId, Item item)
         {
-            var carts = _cartDbContext.GetCollection<Cart>("Carts");
-            var newId = cartId == null ? Guid.NewGuid().ToString() : cartId;
-            var result = false;
-
-            var cart = carts.FindById(cartId) ?? new Cart { Id = newId, Items = new List<Item>() };
-
-            if (cart != null)
+            try
             {
-                // Add the item to the cart
-                cart.Items.Add(item);
+                var carts = _cartDbContext.GetCollection<Cart>("Carts");
+                var newId = cartId == null ? Guid.NewGuid().ToString() : cartId;
+                var result = false;
 
-                // Upsert the cart into the collection
-                result = carts.Upsert(cart);
+                var cart = carts.FindById(newId) ?? new Cart { Id = newId, Items = new List<Item>() };
 
+                if (cart != null)
+                {
+                    // Add the item to the cart
+                    cart.Items.Add(item);
+
+                    // Upsert the cart into the collection
+                    result = carts.Upsert(cart);
+
+                }
+                return 1; //When the cart exists it gets updated on its new item(s) and False is returned
             }
-
-            return result ? 1 : 0;
+            catch (Exception)
+            {
+                return 0;
+            }
         }
 
         public int Delete(string cartId, int itemId)
         {
-            var cart = GetCart(cartId);
-            return cart.Items.RemoveAll(x => x.Id == itemId);
+            try
+            {
+                Cart? cart = GetCart(cartId);
+                if (cart != null)
+                {
+                    var deletedCount = cart.Items.RemoveAll(x => x.Id == itemId);
+                    _cartDbContext.GetCollection<Cart>("Carts").Update(cart);
+                    return deletedCount;
+                }
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+            return 0;
         }
 
         //V2 method

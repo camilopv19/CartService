@@ -22,5 +22,7 @@ namespace BLL
         public Cart? GetCart(string cartId) => _repository.GetCart(cartId);
         public int Delete(string cartId, int itemId) => _repository.Delete(cartId, itemId);
         public int Insert(string cartId, Item item) => _repository.Insert(cartId, item);
+
+        public IEnumerable<Cart> GetAll() => _repository.GetAll();
     }
 }

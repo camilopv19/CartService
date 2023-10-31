@@ -13,5 +13,6 @@ namespace DAL.Interfaces
         Cart? GetCart(string cartId);
         int Delete(string cartId, int itemId);
         int Insert(string? cartId, Item item);
+        public IEnumerable<Cart> GetAll();
     }
 }

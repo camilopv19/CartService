@@ -11,12 +11,12 @@ namespace Carts.Controllers
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/carts")]
     [ApiController]
-    public class CartsV2Controller : ControllerBase
+    public class Carts2Controller : ControllerBase
     {
         private readonly ICartService _itemService;
 
 #pragma warning disable 1591
-        public CartsV2Controller(ICartService cartService)
+        public Carts2Controller(ICartService cartService)
         {
             _itemService = cartService;
         }
@@ -29,7 +29,6 @@ namespace Carts.Controllers
         [ProducesResponseType(typeof(IEnumerable<Item>), 200)]
         public IEnumerable<Item> Get() => _itemService.GetItems();
 
-
         /// <summary>
         /// Inserts an Item into a Cart, if the cart doesn't exist, it'll be created.
         /// </summary>
@@ -39,21 +38,24 @@ namespace Carts.Controllers
         {
 #pragma warning disable CS8604 // Possible null reference argument: cartId.
             int result = _itemService.Insert(cartId, dto);
-            if (result != default)
-                return CreatedAtAction("AddItem", _itemService.GetCart(dto.CartId));
-            else
+            if (result == 0)
+            {
                 return BadRequest();
+            }
+            return Ok(dto);
         }
         /// <summary>
         /// Deletes a Item by its Id and CartId
         /// </summary>
+        /// <param name="cartId">The Id of the Cart containing the Item.</param>
+        /// <param name="itemId">The Id of the item to delete.</param>
         /// <returns>Ok</returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{cartId}/{itemId}")]
         public ActionResult<Item> Delete(string cartId, int itemId)
         {
             var result = _itemService.Delete(cartId, itemId);
             if (result > 0)
-                return NoContent();
+                return Ok($"{result} items were deleted with ItemId = {itemId}");
             else
                 return NotFound();
         }
