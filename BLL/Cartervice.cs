@@ -10,18 +10,17 @@ using System.Threading.Tasks;
 
 namespace BLL
 {
-    public class CartService: ICartService
+    public class Cartervice: ICartService
     {
         private readonly ICartRepository _repository;
-        public CartService(ICartRepository repository)
+        public Cartervice(ICartRepository repository)
         {
             _repository = repository;
         }
         public IEnumerable<Item> GetItems() => _repository.GetItems();
 
-        public Item? FindOne(int id) => _repository.FindOne(id);
-        public int Delete(int id) => _repository.Delete(id);
-        public int Insert(Item cart) => _repository.Insert(cart);
-        public bool Update(Item cart) => _repository.Update(cart);
+        public Cart? GetCart(string cartId) => _repository.GetCart(cartId);
+        public int Delete(string cartId, int itemId) => _repository.Delete(cartId, itemId);
+        public int Insert(string cartId, Item item) => _repository.Insert(cartId, item);
     }
 }

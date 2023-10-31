@@ -16,33 +16,53 @@ namespace DAL.Interfaces
         {
             _cartDbContext = cartDbContext.Database;
         }
-
-        public IEnumerable<Item> GetItems()
+        public Cart? GetCart(string cartId)
         {
-            return _cartDbContext.GetCollection<Item>("Cart").FindAll(); ;
-        }
-        public Item? FindOne(int id)
-        {
-            return _cartDbContext.GetCollection<Item>("Cart")
-                                 .Find(x => x.Id == id)
+            return _cartDbContext.GetCollection<Cart>("Carts")
+                                 .Find(x => x.Id == cartId)
                                  .FirstOrDefault();
         }
 
-        public int Insert(Item cart)
+        public int Insert(string? cartId, Item item)
         {
-            return _cartDbContext.GetCollection<Item>("Cart").Insert(cart);
+            var carts = _cartDbContext.GetCollection<Cart>("Carts");
+            var newId = cartId == null ? Guid.NewGuid().ToString() : cartId;
+            var result = false;
+
+            var cart = carts.FindById(cartId) ?? new Cart { Id = newId, Items = new List<Item>() };
+
+            if (cart != null)
+            {
+                // Add the item to the cart
+                cart.Items.Add(item);
+
+                // Upsert the cart into the collection
+                result = carts.Upsert(cart);
+
+            }
+
+            return result ? 1 : 0;
         }
 
-        public bool Update(Item cart)
+        public int Delete(string cartId, int itemId)
         {
-            return _cartDbContext.GetCollection<Item>("Cart")
-                .Update(cart);
+            var cart = GetCart(cartId);
+            return cart.Items.RemoveAll(x => x.Id == itemId);
         }
 
-        public int Delete(int id)
+        //V2 method
+        public IEnumerable<Item> GetItems()
         {
-            return _cartDbContext.GetCollection<Item>("Cart")
-                .DeleteMany(x => x.Id == id);
+            List<Item> items = new List<Item>();
+            var carts = _cartDbContext.GetCollection<Cart>("Carts").FindAll();
+            foreach (var cart in carts)
+            {
+                if (cart.Items.Any())
+                {
+                    items.AddRange(cart.Items);
+                }
+            }
+            return items;
         }
     }
 }
