@@ -22,12 +22,14 @@ namespace Carts.Controllers
         }
 
         /// <summary>
-        /// Get a list of Items.
+        /// Get Cart info v2: Only the list of Items.
         /// </summary>
+        /// <param name="cartId">String.</param>
         /// <returns>A list of Items.</returns>
-        [HttpGet]
+        /// </summary>
+        [HttpGet("{cartId}", Name = "GetCart")]
         [ProducesResponseType(typeof(IEnumerable<Item>), 200)]
-        public IEnumerable<Item> Get() => _itemService.GetItems();
+        public IEnumerable<Item> Get(string cartId) => _itemService.GetItemsFromCart(cartId);
 
         /// <summary>
         /// Inserts an Item into a Cart, if the cart doesn't exist, it'll be created.

@@ -74,16 +74,15 @@ namespace DAL.Interfaces
         }
 
         //V2 method
-        public IEnumerable<Item> GetItems()
+        public IEnumerable<Item> GetItemsFromCart(string cartId)
         {
-            List<Item> items = new List<Item>();
-            var carts = _cartDbContext.GetCollection<Cart>("Carts").FindAll();
-            foreach (var cart in carts)
+             var cart = _cartDbContext.GetCollection<Cart>("Carts")
+                                 .Find(x => x.Id == cartId)
+                                 .FirstOrDefault();
+            var items = new List<Item>();
+            if( cart != null)
             {
-                if (cart.Items.Any())
-                {
-                    items.AddRange(cart.Items);
-                }
+                items = cart.Items;
             }
             return items;
         }

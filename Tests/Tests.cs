@@ -123,6 +123,42 @@ namespace Tests
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
         }
+
+        [Fact]
+        public void GetItemsFromCartV2_ReturnsItems()
+        {
+            // Arrange
+            var cartId = "sampleCartId";
+            var expectedItems = new List<Item> { /* create some test items */ };
+
+            _cartServiceMock.Setup(service => service.GetItemsFromCart(cartId)).Returns(expectedItems);
+
+            var controller = new Carts2Controller(_cartServiceMock.Object);
+
+            // Act
+            var result = controller.Get(cartId);
+
+            // Assert
+            Assert.Equal(expectedItems, result);
+        }
+
+        [Fact]
+        public void GetItemsFromCartV2_EmptyCart_ReturnsEmptyList()
+        {
+            // Arrange
+            var cartId = "emptyCartId";
+            var emptyCart = new Cart { Id = cartId, Items = new List<Item>() };
+
+            _cartServiceMock.Setup(service => service.GetItemsFromCart(cartId)).Returns(emptyCart.Items);
+
+            var controller = new Carts2Controller(_cartServiceMock.Object);
+
+            // Act
+            var result = controller.Get(cartId);
+
+            // Assert
+            Assert.Empty(result);
+        }
     }
 
 }

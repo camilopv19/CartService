@@ -17,7 +17,7 @@ namespace BLL
         {
             _repository = repository;
         }
-        public IEnumerable<Item> GetItems() => _repository.GetItems();
+        public IEnumerable<Item> GetItemsFromCart(string cartId) => _repository.GetItemsFromCart(cartId);
 
         public Cart? GetCart(string cartId) => _repository.GetCart(cartId);
         public int Delete(string cartId, int itemId) => _repository.Delete(cartId, itemId);

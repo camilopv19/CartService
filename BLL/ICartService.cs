@@ -9,7 +9,7 @@ namespace BLL
 {
     public interface ICartService
     {
-        IEnumerable<Item> GetItems();
+        IEnumerable<Item> GetItemsFromCart(string cartId);
         Cart? GetCart(string cartId);
         int Delete(string cartId, int itemId);
         int Insert(string cartId, Item item);
