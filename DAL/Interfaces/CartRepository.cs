@@ -44,7 +44,6 @@ namespace DAL.Interfaces
 
                     // Upsert the cart into the collection
                     result = carts.Upsert(cart);
-
                 }
                 return 1; //When the cart exists it gets updated on its new item(s) and False is returned
             }

@@ -2,7 +2,6 @@ using BLL;
 using DAL.Data;
 using DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Reflection;
@@ -39,7 +38,7 @@ builder.Services.AddControllers();
 
 // Bind LiteDbOptions from appsettings.json
 builder.Services.Configure<LiteDbOptions>(builder.Configuration.GetSection("LiteDbOptions"));
-builder.Services.AddSingleton<ILiteDbContext, LiteDbContext>(); 
+builder.Services.AddSingleton<ILiteDbContext, LiteDbContext>();
 
 // Bind Cart Repo and Svc
 builder.Services.AddScoped<ICartRepository, CartRepository>();
@@ -48,7 +47,7 @@ builder.Services.AddTransient<ICartService, ICartservice>();
 var app = builder.Build();
 
 // Open a console window
-OpenConsoleWindow(app);
+await OpenConsoleWindow(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -70,7 +69,7 @@ app.MapControllers();
 app.Run();
 
 // Method to open a console window
-void OpenConsoleWindow(WebApplication appInstance)
+async Task OpenConsoleWindow(WebApplication appInstance)
 {
     ProcessStartInfo psi = new ProcessStartInfo
     {
@@ -83,6 +82,7 @@ void OpenConsoleWindow(WebApplication appInstance)
 
     Process process = new Process { StartInfo = psi };
     process.Start();
+
     // Resolve dependencies and instantiate services
     using (var scope = appInstance.Services.CreateScope())
     {
@@ -93,7 +93,14 @@ void OpenConsoleWindow(WebApplication appInstance)
 
         // Instantiate MessageService and pass Cartservice
         var messageService = new MessageService(cartService);
-        messageService.Receive();
+        //var messageService = new MessageService();
+
+        // Start receiving messages
+        var result = messageService.Receive();
+        //messageService.Receive2();
+
+        // Wait for the first message to be received
+        await messageService.WaitForMessage();
 
         Console.WriteLine(" Press [enter] to exit.");
         Console.ReadLine();
