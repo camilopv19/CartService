@@ -4,6 +4,7 @@ using DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
+using System.Diagnostics;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,9 +43,12 @@ builder.Services.AddSingleton<ILiteDbContext, LiteDbContext>();
 
 // Bind Cart Repo and Svc
 builder.Services.AddScoped<ICartRepository, CartRepository>();
-builder.Services.AddTransient<ICartService, Cartervice>();
+builder.Services.AddTransient<ICartService, ICartservice>();
 
 var app = builder.Build();
+
+// Open a console window
+OpenConsoleWindow(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -64,3 +68,34 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Method to open a console window
+void OpenConsoleWindow(WebApplication appInstance)
+{
+    ProcessStartInfo psi = new ProcessStartInfo
+    {
+        FileName = "cmd.exe",
+        RedirectStandardInput = true,
+        RedirectStandardOutput = true,
+        CreateNoWindow = false,
+        UseShellExecute = false
+    };
+
+    Process process = new Process { StartInfo = psi };
+    process.Start();
+    // Resolve dependencies and instantiate services
+    using (var scope = appInstance.Services.CreateScope())
+    {
+        var serviceProvider = scope.ServiceProvider;
+
+        // Instantiate Cartservice
+        var cartService = serviceProvider.GetRequiredService<ICartService>();
+
+        // Instantiate MessageService and pass Cartservice
+        var messageService = new MessageService(cartService);
+        messageService.Receive();
+
+        Console.WriteLine(" Press [enter] to exit.");
+        Console.ReadLine();
+    }
+}

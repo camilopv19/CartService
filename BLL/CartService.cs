@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace BLL
 {
-    public class Cartervice: ICartService
+    public class ICartservice: ICartService
     {
         private readonly ICartRepository _repository;
-        public Cartervice(ICartRepository repository)
+        public ICartservice(ICartRepository repository)
         {
             _repository = repository;
         }

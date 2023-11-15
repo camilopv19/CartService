@@ -14,5 +14,20 @@ namespace DAL.Entities
         public string? Image { get; set; }
         public double Price { get; set; }
         public int Quantity { get; set; }
+
+        public Item(MessageItem messageItem)
+        {
+            // Catalog item signature Mapping
+            Id = messageItem.Id;
+            Name = messageItem.Name;
+            Image = messageItem.Image;
+            Price = Convert.ToDouble(messageItem.Price);
+            Quantity = messageItem.Amount;
+        }
+
+        public Item()
+        {
+            
+        }
     }
 }
