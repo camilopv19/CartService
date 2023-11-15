@@ -93,11 +93,9 @@ async Task OpenConsoleWindow(WebApplication appInstance)
 
         // Instantiate MessageService and pass Cartservice
         var messageService = new MessageService(cartService);
-        //var messageService = new MessageService();
 
         // Start receiving messages
         var result = messageService.Receive();
-        //messageService.Receive2();
 
         // Wait for the first message to be received
         await messageService.WaitForMessage();
