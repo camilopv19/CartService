@@ -1,4 +1,4 @@
-# ATENTION: This repo was used for 2 different tasks
+# ATENTION: This repo was used for different tasks
 
 ### Carting / Task 1
 
