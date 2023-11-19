@@ -3,6 +3,7 @@ using DAL.Data;
 using DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using Presentation;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -38,16 +39,23 @@ builder.Services.AddControllers();
 
 // Bind LiteDbOptions from appsettings.json
 builder.Services.Configure<LiteDbOptions>(builder.Configuration.GetSection("LiteDbOptions"));
+
 builder.Services.AddSingleton<ILiteDbContext, LiteDbContext>();
+
+
+// Inject CartService as dependency in RabbitMqConsumer class
+builder.Services.AddScoped<IMessageConsumer>(factory =>
+{
+    var cartService = factory.GetService<ICartService>();
+    return new RabbitMqConsumer(cartService);
+});
 
 // Bind Cart Repo and Svc
 builder.Services.AddScoped<ICartRepository, CartRepository>();
-builder.Services.AddTransient<ICartService, ICartservice>();
+builder.Services.AddScoped<ICartService, ICartservice>();
 
+builder.Services.AddHostedService<RabbitMqHostedService>();
 var app = builder.Build();
-
-// Open a console window
-await OpenConsoleWindow(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -67,40 +75,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-// Method to open a console window
-async Task OpenConsoleWindow(WebApplication appInstance)
-{
-    ProcessStartInfo psi = new ProcessStartInfo
-    {
-        FileName = "cmd.exe",
-        RedirectStandardInput = true,
-        RedirectStandardOutput = true,
-        CreateNoWindow = false,
-        UseShellExecute = false
-    };
-
-    Process process = new Process { StartInfo = psi };
-    process.Start();
-
-    // Resolve dependencies and instantiate services
-    using (var scope = appInstance.Services.CreateScope())
-    {
-        var serviceProvider = scope.ServiceProvider;
-
-        // Instantiate Cartservice
-        var cartService = serviceProvider.GetRequiredService<ICartService>();
-
-        // Instantiate MessageService and pass Cartservice
-        var messageService = new MessageService(cartService);
-
-        // Start receiving messages
-        var result = messageService.Receive();
-
-        // Wait for the first message to be received
-        await messageService.WaitForMessage();
-
-        Console.WriteLine(" Press [enter] to exit.");
-        Console.ReadLine();
-    }
-}

@@ -19,6 +19,7 @@ namespace DAL.Entities
         {
             // Catalog item signature Mapping
             Id = messageItem.Id;
+            CartId = messageItem.CategoryId.ToString();
             Name = messageItem.Name;
             Image = messageItem.Image;
             Price = Convert.ToDouble(messageItem.Price);

@@ -39,10 +39,29 @@ namespace DAL.Interfaces
 
                 if (cart != null)
                 {
-                    // Add the item to the cart
-                    cart.Items.Add(item);
+                    // If cart exists, update the item if it exists in the cart, otherwise, add to cart
+                    var existingItem = cart.Items.FirstOrDefault(i => i.Id == item.Id);
 
-                    // Upsert the cart into the collection
+                    if (existingItem != null)
+                    {
+                        existingItem.CartId = item.CartId;
+                        existingItem.Name = item.Name;
+                        existingItem.Image = item.Image;
+                        existingItem.Price = item.Price;
+                        existingItem.Quantity = item.Quantity;
+                    }
+                    else
+                    {
+                        cart.Items.Add(item);
+                    }
+
+                    carts.Upsert(cart);
+                }
+                else
+                {
+                    // If cart doesn't exist, create a new cart and add the item
+                    cart = new Cart { Id = newId };
+                    cart.Items.Add(item);
                     result = carts.Upsert(cart);
                 }
                 return 1; //When the cart exists it gets updated on its new item(s) and False is returned
@@ -75,11 +94,11 @@ namespace DAL.Interfaces
         //V2 method
         public IEnumerable<Item> GetItemsFromCart(string cartId)
         {
-             var cart = _cartDbContext.GetCollection<Cart>("Carts")
-                                 .Find(x => x.Id == cartId)
-                                 .FirstOrDefault();
+            var cart = _cartDbContext.GetCollection<Cart>("Carts")
+                                .Find(x => x.Id == cartId)
+                                .FirstOrDefault();
             var items = new List<Item>();
-            if( cart != null)
+            if (cart != null)
             {
                 items = cart.Items;
             }
