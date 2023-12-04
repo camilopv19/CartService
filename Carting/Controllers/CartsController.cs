@@ -12,12 +12,27 @@ namespace Carts.Controllers
     [ApiController]
     public class CartsController : ControllerBase
     {
-        private readonly ICartService _itemService;
+        private readonly ICartService _cartService;
 
 #pragma warning disable 1591
         public CartsController(ICartService cartService)
         {
-            _itemService = cartService;
+            _cartService = cartService;
+        }
+
+        /// <summary>
+        /// Gets an Item by its Id
+        /// </summary>
+        /// <param name="itemId">The Id of the item to delete.</param>
+        /// <returns>Ok</returns>
+        [HttpGet("item/{itemId}")]
+        public ActionResult<Item> GetItem(int itemId)
+        {
+            var result = _cartService.GetItem(itemId);
+            if (result != null)
+                return Ok(result);
+            else
+                return NotFound();
         }
 
         /// <summary>
@@ -28,9 +43,9 @@ namespace Carts.Controllers
         [HttpGet("{cartId}", Name = "GetCart")]
         public ActionResult<Cart> Get(string cartId)
         {
-            var result = _itemService.GetCart(cartId);
+            var result = _cartService.GetCart(cartId);
             if (result != default)
-                return Ok(_itemService.GetCart(cartId));
+                return Ok(_cartService.GetCart(cartId));
             else
                 return NotFound();
         }
@@ -41,9 +56,9 @@ namespace Carts.Controllers
         [HttpGet(Name = "GetAll")]
         public ActionResult<Item> GetAll()
         {
-            var result = _itemService.GetAll();
+            var result = _cartService.GetAll();
             if (result != default)
-                return Ok(_itemService.GetAll());
+                return Ok(_cartService.GetAll());
             else
                 return NotFound();
         }
@@ -56,7 +71,7 @@ namespace Carts.Controllers
         public ActionResult<Item> AddItem(string? cartId, Item dto)
         {
 #pragma warning disable CS8604 // Possible null reference argument: cartId.
-            int result = _itemService.Insert(cartId, dto);
+            int result = _cartService.Insert(cartId, dto);
             if (result == 0)
             {
                 return BadRequest();
@@ -64,7 +79,7 @@ namespace Carts.Controllers
             return Ok(dto);
         }
         /// <summary>
-        /// Deletes a Item by its Id and CartId
+        /// Deletes an Item by its Id and CartId
         /// </summary>
         /// <param name="cartId">The Id of the Cart containing the Item.</param>
         /// <param name="itemId">The Id of the item to delete.</param>
@@ -72,7 +87,7 @@ namespace Carts.Controllers
         [HttpDelete("{cartId}/{itemId}")]
         public ActionResult<Item> Delete(string cartId, int itemId)
         {
-            var result = _itemService.Delete(cartId, itemId);
+            var result = _cartService.Delete(cartId, itemId);
             if (result > 0)
                 return Ok($"{result} items were deleted with ItemId = {itemId}");
             else

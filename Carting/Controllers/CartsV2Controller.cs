@@ -26,7 +26,6 @@ namespace Carts.Controllers
         /// </summary>
         /// <param name="cartId">String.</param>
         /// <returns>A list of Items.</returns>
-        /// </summary>
         [HttpGet("{cartId}", Name = "GetCart")]
         [ProducesResponseType(typeof(IEnumerable<Item>), 200)]
         public IEnumerable<Item> Get(string cartId) => _itemService.GetItemsFromCart(cartId);

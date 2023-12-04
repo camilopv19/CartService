@@ -38,7 +38,7 @@ namespace BLL
                 byte[] body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
                 var receivedItem = JsonConvert.DeserializeObject<MessageItem>(message);
-                string response = upsertReceivedItem(receivedItem) == 1 ? "Success" : "Fail";
+                string response = UpsertReceivedItem(receivedItem) == 1 ? "Success" : "Fail";
                 Console.WriteLine($" Message received: {message}");
                 Console.WriteLine($" Update response: {response}");
                 //result = response;
@@ -48,9 +48,9 @@ namespace BLL
                                  consumer: consumer);
         }
 
-        private int upsertReceivedItem(MessageItem messageItem)
+        private int UpsertReceivedItem(MessageItem messageItem)
         {
-            Item item = new Item(messageItem);
+            Item item = new (messageItem);
             return _cartService.Insert(item.CartId, item);
         }
     }

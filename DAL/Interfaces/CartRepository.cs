@@ -11,7 +11,7 @@ namespace DAL.Interfaces
 {
     public class CartRepository : ICartRepository
     {
-        private LiteDatabase _cartDbContext;
+        private readonly LiteDatabase _cartDbContext;
         public CartRepository(ILiteDbContext cartDbContext)
         {
             _cartDbContext = cartDbContext.Database;
@@ -27,12 +27,33 @@ namespace DAL.Interfaces
             return _cartDbContext.GetCollection<Cart>("Carts").FindAll();
         }
 
+        public Item? GetItem(int itemId)
+        {
+            try
+            {
+                var carts = _cartDbContext.GetCollection<Cart>("Carts").FindAll();
+                foreach (var cart in carts)
+                {
+                    var item = cart.Items.Find(i => i.Id == itemId);
+                    if (item != null)
+                    {
+                        return item;
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            return null;
+        }
         public int Insert(string? cartId, Item item)
         {
             try
             {
                 var carts = _cartDbContext.GetCollection<Cart>("Carts");
-                var newId = cartId == null ? Guid.NewGuid().ToString() : cartId;
+                var newId = cartId ?? Guid.NewGuid().ToString();
                 var result = false;
 
                 var cart = carts.FindById(newId) ?? new Cart { Id = newId, Items = new List<Item>() };

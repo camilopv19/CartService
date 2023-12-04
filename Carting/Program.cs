@@ -52,7 +52,7 @@ builder.Services.AddScoped<IMessageConsumer>(factory =>
 
 // Bind Cart Repo and Svc
 builder.Services.AddScoped<ICartRepository, CartRepository>();
-builder.Services.AddScoped<ICartService, ICartservice>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 builder.Services.AddHostedService<RabbitMqHostedService>();
 var app = builder.Build();
