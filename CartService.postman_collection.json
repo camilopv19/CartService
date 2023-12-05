@@ -1,0 +1,106 @@
+{
+	"info": {
+		"_postman_id": "2967edbe-66fd-4f52-a68c-a0c699a6c9bb",
+		"name": "Task1-Cart",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14201604"
+	},
+	"item": [
+		{
+			"name": "Get Cart info by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:{{port}}/api/v1/carts/344dc217-7b1f-49da-aad7-65c004509c67",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"v1",
+						"carts",
+						"344dc217-7b1f-49da-aad7-65c004509c67"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Insert Item",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 0,\r\n  \"cartId\": \"Ocelot2\",\r\n  \"name\": \"Ocelot2\",\r\n  \"image\": \"Ocelot2\",\r\n  \"price\": 0,\r\n  \"quantity\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:{{port}}/api/v1/carts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"v1",
+						"carts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Item by Id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:{{port}}/api/v1/carts/344dc217-7b1f-49da-aad7-65c004509c67/0",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"v1",
+						"carts",
+						"344dc217-7b1f-49da-aad7-65c004509c67",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Carts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:{{port}}/api/v1/carts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"v1",
+						"carts"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
