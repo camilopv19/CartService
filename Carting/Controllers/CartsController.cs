@@ -23,12 +23,12 @@ namespace Carts.Controllers
         /// <summary>
         /// Gets an Item by its Id
         /// </summary>
-        /// <param name="itemId">The Id of the item to delete.</param>
+        /// <param name="id">The Id of the item to delete.</param>
         /// <returns>Ok</returns>
-        [HttpGet("item/{itemId}")]
-        public ActionResult<Item> GetItem(int itemId)
+        [HttpGet("item/{id}")]
+        public ActionResult<Item> GetItem(int id)
         {
-            var result = _cartService.GetItem(itemId);
+            var result = _cartService.GetItem(id);
             if (result != null)
                 return Ok(result);
             else
