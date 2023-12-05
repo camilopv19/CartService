@@ -1,8 +1,8 @@
 # ATENTION: This repo was used for different tasks
 
-### Carting / Task 1
+### Task 6
 
-Review and checkout first commits.
+New endpoint for achieving API gateway module requirements.
 
 ### Carting / Task 4 (Message broker Listener)
 
@@ -18,3 +18,7 @@ For this version of the project, a swagger page (for previous Cart API) and a de
 If one message is received (from an updated item in the Catalog service/project), the respective operations will be executed and the results will be logged on the console.
 
 In the swagger page (or using any http/REST client) the given item will be inserted or updated according the existence of the Cart Id. So it's recommended to run the Get Carts method to see the changes.
+
+### Carting / Task 1
+
+Review and checkout first commits.
