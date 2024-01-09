@@ -55,6 +55,7 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartService, CartService>();
 
 builder.Services.AddHostedService<RabbitMqHostedService>();
+builder.Services.AddApplicationInsightsTelemetry();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
