@@ -3,7 +3,7 @@
 # Task 7: APM tools - Azure Application Insights
 Clone or checkout the last commit, configure an Azure account and create an Application Insights app, go to the project appsettings.json file, provide ConnectionString and InstrumentationKey inside the ApplicationInsights object and run the API.
 
-Hitting the endpoints will generate traces, logs and the custom event called "GetAllCarts".
+Hitting the endpoints will generate traces, logs and custom events logs depending on the API version and method.
 
 ### Task 6
 
