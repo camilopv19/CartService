@@ -1,9 +1,11 @@
 using BLL;
 using DAL.Data;
 using DAL.Interfaces;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Presentation;
+using Presentation.Telemetry;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -20,6 +22,9 @@ builder.Services.AddSwaggerGen(c =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
 });
+
+builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["ApplicationInsights:InstrumentationKey"]);
+builder.Services.AddSingleton<Presentation.Telemetry.ITelemetryInitializer, TelemetryInitializer>();
 
 //API versioning
 builder.Services.AddApiVersioning(options =>

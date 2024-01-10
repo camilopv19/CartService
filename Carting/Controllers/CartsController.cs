@@ -1,5 +1,6 @@
 ﻿using BLL;
 using DAL.Entities;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Carts.Controllers
@@ -13,11 +14,13 @@ namespace Carts.Controllers
     public class CartsController : ControllerBase
     {
         private readonly ICartService _cartService;
+        private readonly TelemetryClient telemetryClient;
 
 #pragma warning disable 1591
-        public CartsController(ICartService cartService)
+        public CartsController(ICartService cartService, TelemetryClient telemetryClient)
         {
             _cartService = cartService;
+            this.telemetryClient = telemetryClient;
         }
 
         /// <summary>
@@ -30,7 +33,10 @@ namespace Carts.Controllers
         {
             var result = _cartService.GetItem(id);
             if (result != null)
+            {
+                telemetryClient.TrackEvent("Get Item v1");
                 return Ok(result);
+            }
             else
                 return NotFound();
         }
@@ -44,8 +50,10 @@ namespace Carts.Controllers
         public ActionResult<Cart> Get(string cartId)
         {
             var result = _cartService.GetCart(cartId);
-            if (result != default)
+            if (result != default) {
+                telemetryClient.TrackEvent("Get Cart v1");
                 return Ok(_cartService.GetCart(cartId));
+            }
             else
                 return NotFound();
         }
@@ -57,8 +65,10 @@ namespace Carts.Controllers
         public ActionResult<Item> GetAll()
         {
             var result = _cartService.GetAll();
-            if (result != default)
+            if (result != default){
+                telemetryClient.TrackEvent("Get all Items v1");
                 return Ok(_cartService.GetAll());
+            }
             else
                 return NotFound();
         }
@@ -76,6 +86,7 @@ namespace Carts.Controllers
             {
                 return BadRequest();
             }
+            telemetryClient.TrackEvent("Add Item v1");
             return Ok(dto);
         }
         /// <summary>
@@ -88,8 +99,10 @@ namespace Carts.Controllers
         public ActionResult<Item> Delete(string cartId, int itemId)
         {
             var result = _cartService.Delete(cartId, itemId);
-            if (result > 0)
+            if (result > 0){
+                telemetryClient.TrackEvent("Delete Item v1");
                 return Ok($"{result} items were deleted with ItemId = {itemId}");
+            }
             else
                 return NotFound();
         }

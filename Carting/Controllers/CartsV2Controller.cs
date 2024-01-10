@@ -1,5 +1,6 @@
 ﻿using BLL;
 using DAL.Entities;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Carts.Controllers
@@ -14,11 +15,13 @@ namespace Carts.Controllers
     public class Carts2Controller : ControllerBase
     {
         private readonly ICartService _itemService;
+        private readonly TelemetryClient telemetryClient;
 
 #pragma warning disable 1591
-        public Carts2Controller(ICartService cartService)
+        public Carts2Controller(ICartService cartService, TelemetryClient telemetryClient)
         {
             _itemService = cartService;
+            this.telemetryClient = telemetryClient;
         }
 
         /// <summary>
@@ -28,7 +31,11 @@ namespace Carts.Controllers
         /// <returns>A list of Items.</returns>
         [HttpGet("{cartId}", Name = "GetCart")]
         [ProducesResponseType(typeof(IEnumerable<Item>), 200)]
-        public IEnumerable<Item> Get(string cartId) => _itemService.GetItemsFromCart(cartId);
+        public IEnumerable<Item> Get(string cartId)
+        {
+            telemetryClient.TrackEvent("Get Cart v2");
+            return _itemService.GetItemsFromCart(cartId);
+        }
 
         /// <summary>
         /// Inserts an Item into a Cart, if the cart doesn't exist, it'll be created.
@@ -43,6 +50,7 @@ namespace Carts.Controllers
             {
                 return BadRequest();
             }
+            telemetryClient.TrackEvent("Add item v2");
             return Ok(dto);
         }
         /// <summary>
@@ -56,7 +64,10 @@ namespace Carts.Controllers
         {
             var result = _itemService.Delete(cartId, itemId);
             if (result > 0)
+            {
+                telemetryClient.TrackEvent("Deleted Item v2");
                 return Ok($"{result} items were deleted with ItemId = {itemId}");
+            }
             else
                 return NotFound();
         }
